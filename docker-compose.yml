@@ -1,0 +1,123 @@
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-postgres:15-alpine}
+    container_name: ${POSTGRES_CONTAINER_NAME:-merchant-postgres}
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - '${POSTGRES_HOST_PORT:-5432}:${POSTGRES_CONTAINER_PORT:-5432}'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}']
+      interval: ${POSTGRES_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${POSTGRES_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${POSTGRES_HEALTHCHECK_RETRIES:-5}
+      start_period: ${POSTGRES_HEALTHCHECK_START_PERIOD:-30s}
+    networks:
+      - ${NETWORK_NAME:-merchant-network}
+    restart: ${RESTART_POLICY:-unless-stopped}
+
+  redis:
+    image: ${REDIS_IMAGE:-redis:7-alpine}
+    container_name: ${REDIS_CONTAINER_NAME:-merchant-redis}
+    command: redis-server --appendonly ${REDIS_APPENDONLY:-yes}
+    ports:
+      - '${REDIS_HOST_PORT:-6379}:${REDIS_CONTAINER_PORT:-6379}'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: ${REDIS_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${REDIS_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${REDIS_HEALTHCHECK_RETRIES:-5}
+      start_period: ${REDIS_HEALTHCHECK_START_PERIOD:-10s}
+    networks:
+      - ${NETWORK_NAME:-merchant-network}
+    restart: ${RESTART_POLICY:-unless-stopped}
+
+  rabbitmq:
+    image: ${RABBITMQ_IMAGE:-rabbitmq:3-management-alpine}
+    container_name: ${RABBITMQ_CONTAINER_NAME:-merchant-rabbitmq}
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST:-/}
+    ports:
+      - '${RABBITMQ_HOST_PORT:-5672}:${RABBITMQ_CONTAINER_PORT:-5672}'
+      - '${RABBITMQ_MANAGEMENT_HOST_PORT:-15672}:${RABBITMQ_MANAGEMENT_CONTAINER_PORT:-15672}'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      interval: ${RABBITMQ_HEALTHCHECK_INTERVAL:-10s}
+      timeout: ${RABBITMQ_HEALTHCHECK_TIMEOUT:-5s}
+      retries: ${RABBITMQ_HEALTHCHECK_RETRIES:-5}
+      start_period: ${RABBITMQ_HEALTHCHECK_START_PERIOD:-40s}
+    networks:
+      - ${NETWORK_NAME:-merchant-network}
+    restart: ${RESTART_POLICY:-unless-stopped}
+
+  backend:
+    build:
+      context: .
+      dockerfile: ${BACKEND_DOCKERFILE:-Dockerfile}
+      target: ${BACKEND_BUILD_TARGET:-development}
+    container_name: ${BACKEND_CONTAINER_NAME:-merchant-backend}
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+    ports:
+      - '${BACKEND_HOST_PORT:-3001}:${PORT}'
+      - '${DEBUG_PORT:-9229}:9229'
+    volumes:
+      - ./src:/app/src:delegated
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ${NETWORK_NAME:-merchant-network}
+    restart: ${RESTART_POLICY:-unless-stopped}
+    command: ${BACKEND_START_COMMAND:-npm run start:dev}
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  rabbitmq_log:
+    driver: local
+  backend_node_modules:
+    driver: local
+
+networks:
+  merchant-network:
+    driver: bridge
+    name: ${NETWORK_NAME:-merchant-network}

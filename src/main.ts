@@ -33,7 +33,6 @@ async function bootstrap() {
     .setTitle('Merchant Transaction System API')
     .setDescription('API documentation for the Merchant Transaction System')
     .setVersion('1.0')
-    .addTag('auth', 'Authentication endpoints')
     .addBearerAuth(
       {
         type: 'http',

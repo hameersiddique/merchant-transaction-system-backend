@@ -123,7 +123,7 @@ export class TransactionsService {
   private async publishTransactionCreatedEvent(
     transaction: Transaction,
   ): Promise<void> {
-    const event = new TransactionCreatedEvent({
+    const event: TransactionCreatedEvent = new TransactionCreatedEvent({
       id: transaction.id,
       merchantId: transaction.merchantId,
       amount: transaction.amount,

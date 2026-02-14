@@ -9,7 +9,7 @@ import { Merchant } from '../merchants/entities/merchant.entity';
 import { AuthController } from './auth.controller';
 import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from '../../common/strategies/jwt.strategy';
 
 @Module({
   imports: [

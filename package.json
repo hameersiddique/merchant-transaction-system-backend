@@ -31,7 +31,7 @@
     "docker:all": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "dev:local": "npm run docker:db && npm run docker:redis && npm run docker:rabbitmq && npm run start:local"
+    "dev:local": "npm i && npm run docker:db && npm run docker:redis && npm run docker:rabbitmq && npm run start:local"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^3.1.0",

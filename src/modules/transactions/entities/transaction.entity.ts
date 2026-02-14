@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Merchant } from '../../merchants/entities/merchant.entity';
 
 export enum TransactionStatus {
@@ -8,6 +16,7 @@ export enum TransactionStatus {
 }
 
 @Entity('transactions')
+@Index('idx_transactions_merchant_id', ['merchantId'])
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

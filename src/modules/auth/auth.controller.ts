@@ -18,7 +18,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { AuthThrottle } from 'src/infrastructure/rate-limiter/decorators/throttle.decorator';
 import { AuthService } from './auth.service';
 import { LoginRequestDto } from './dto/request/login.request.dto';
 import { RefreshTokenRequestDto } from './dto/request/refreshToken.request.dto';
@@ -27,7 +26,8 @@ import { LoginResponseDto } from './dto/response/login.response.dto';
 import { LogoutResponseDto } from './dto/response/logout.response.dto';
 import { RefreshTokenResponseDto } from './dto/response/refreshToken.response.dto';
 import { RegisterResponseDto } from './dto/response/register.response.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { AuthThrottle } from 'src/infrastructure/rate-limiter/decorators/throttle.decorator';
 
 interface AuthenticatedRequest extends Request {
   user: {

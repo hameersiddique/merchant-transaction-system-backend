@@ -18,7 +18,7 @@ import {
   ApiTags
 } from '@nestjs/swagger';
 import { AuthThrottle } from 'src/infrastructure/rate-limiter/decorators/throttle.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateTransactionRequestDto } from './dto/request/createTransaction.request.dto';
 import { GetPaginatedTransactionsRequestDto } from './dto/request/getTransactions.request.dto';
 import { CreateTransactionResponseDto } from './dto/response/createTransaction.response.dto';

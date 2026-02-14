@@ -1,7 +1,10 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Transaction } from '../../transactions/entities/transaction.entity';
 
 @Entity('merchants')
+@Index('idx_merchant_name', ['name']) // for name based searches
+@Index('idx_merchant_refresh_token', ['refreshToken']) // for token validation
+@Index('idx_merchant_created_at', ['createdAt']) // for date sorting/filtering
 export class Merchant {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

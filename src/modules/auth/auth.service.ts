@@ -80,7 +80,6 @@ export class AuthService {
     const accessToken = this.generateAccessToken(merchant.id, merchant.email);
     const refreshToken = this.generateRefreshToken(merchant.id);
 
-    // Store refresh token hash in database
     const hashedRefreshToken = await this.hashPassword(refreshToken);
     await this.authRepository.updateRefreshToken(merchant.id, hashedRefreshToken);
 
@@ -98,7 +97,6 @@ export class AuthService {
   }
 
   async logout(merchantId: string): Promise<LogoutResponseDto> {
-    // Remove refresh token from database
     await this.authRepository.updateRefreshToken(merchantId, null);
 
     this.logger.log(`Merchant logged out successfully: ${merchantId}`);

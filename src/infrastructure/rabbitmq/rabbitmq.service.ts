@@ -8,6 +8,7 @@ import {
 import * as amqp from 'amqp-connection-manager';
 import type { ConfirmChannel, Options } from 'amqplib';
 import type { RabbitMQConfig } from './rabbitmq.config';
+import { TransactionCreatedEvent } from 'src/modules/transactions/events/transactionCreated.event';
 
 export interface MessageHandler {
   (message: any): Promise<void>;
@@ -85,7 +86,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async publish(routingKey: string, message: any): Promise<void> {
+  async publish(routingKey: string, message: unknown): Promise<void> {
     if (!this.isReady) {
       this.logger.warn('rabbitMQ not ready, skipping message publish');
       return;
@@ -111,7 +112,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async publishTransactionCreated(event: any): Promise<void> {
+  async publishTransactionCreated(event: TransactionCreatedEvent): Promise<void> {
     await this.publish(this.config.routingKey, event);
   }
 

@@ -24,21 +24,34 @@ export class TransactionsWorker implements OnModuleInit {
         });
     }
 
-    private async processTransaction(event: TransactionCreatedEvent): Promise<void> {
+    private async processTransaction(
+        event: TransactionCreatedEvent,
+    ): Promise<void> {
         this.logger.log(`processing transaction ${event.id}`);
 
         try {
             // simulate processing delay (5 seconds)
             await this.simulateProcessing(5000);
 
-            await this.transactionsRepository.updateStatus(
-                event.id,
-                TransactionStatus.SUCCESS,
-            );
+            // randomly decide success or failure
+            const isSuccess = Math.random() < 0.8;
 
-            this.logger.log(`transaction ${event.id} completed successfully`);
+            const status = isSuccess
+                ? TransactionStatus.SUCCESS
+                : TransactionStatus.FAILED;
+
+            await this.transactionsRepository.updateStatus(event.id, status);
+
+            if (isSuccess) {
+                this.logger.log(`transaction ${event.id} completed successfully`);
+            } else {
+                this.logger.warn(`transaction ${event.id} failed during processing`);
+            }
         } catch (error) {
-            this.logger.error(`failed to process transaction ${event.id}:`, error);
+            this.logger.error(
+                `unexpected error while processing transaction ${event.id}:`,
+                error,
+            );
 
             await this.transactionsRepository.updateStatus(
                 event.id,
@@ -46,6 +59,7 @@ export class TransactionsWorker implements OnModuleInit {
             );
         }
     }
+
 
     private async simulateProcessing(ms: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, ms));

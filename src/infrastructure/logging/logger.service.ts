@@ -26,31 +26,31 @@ export class LoggerService implements NestLoggerService {
         this.context = context;
     }
 
-    log(message: any, context?: string) {
+    log(message: string, context?: string) {
         this.printMessage('info', message, context);
     }
 
-    error(message: any, trace?: string, context?: string) {
+    error(message: string, trace?: string, context?: string) {
         this.printMessage('error', message, context, trace);
     }
 
-    warn(message: any, context?: string) {
+    warn(message: string, context?: string) {
         this.printMessage('warn', message, context);
     }
 
-    debug(message: any, context?: string) {
+    debug(message: string, context?: string) {
         if (this.config.level === LogLevel.DEBUG) {
             this.printMessage('debug', message, context);
         }
     }
 
-    verbose(message: any, context?: string) {
+    verbose(message: string, context?: string) {
         this.printMessage('debug', message, context);
     }
 
     private printMessage(
         level: 'info' | 'error' | 'warn' | 'debug',
-        message: any,
+        message: string,
         context?: string,
         trace?: string,
     ) {
@@ -84,7 +84,7 @@ export class LoggerService implements NestLoggerService {
         }
     }
 
-    private formatMessage(message: any): string {
+    private formatMessage(message: unknown): string {
         if (typeof message === 'string') {
             return message;
         }

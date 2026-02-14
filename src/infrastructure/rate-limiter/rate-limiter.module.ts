@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisCacheModule } from '../cache/cache.module';
 import { LoggerModule } from '../logging/logger.module';
 import { LoggerService } from '../logging/logger.service';
@@ -14,18 +15,19 @@ import { Cache } from 'cache-manager';
         RedisCacheModule,
         LoggerModule,
         ThrottlerModule.forRootAsync({
-            imports: [RedisCacheModule, LoggerModule],
+            imports: [RedisCacheModule, LoggerModule, ConfigModule],
             useFactory: async (
                 cacheManager: Cache,
                 logger: LoggerService,
+                configService: ConfigService,
             ) => {
                 const storage = new RedisThrottlerStorageService(cacheManager, logger);
                 return {
-                    ...getThrottlerConfig(),
+                    ...getThrottlerConfig(configService),
                     storage,
                 };
             },
-            inject: [CACHE_MANAGER, LoggerService],
+            inject: [CACHE_MANAGER, LoggerService, ConfigService],
         }),
     ],
     providers: [RedisThrottlerStorageService],

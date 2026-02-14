@@ -32,6 +32,16 @@ export const getEnv = (config: ConfigService) => ({
     rabbitQueue: config.get<string>('RABBITMQ_QUEUE') || 'transaction.created',
     rabbitRoutingKey: config.get<string>('RABBITMQ_ROUTING_KEY') || 'transaction.created',
 
+    // rate limiter
+    throttleDefaultTtl: config.get<number>('THROTTLE_DEFAULT_TTL') || 60,
+    throttleDefaultLimit: config.get<number>('THROTTLE_DEFAULT_LIMIT') || 60,
+    throttleAuthTtl: config.get<number>('THROTTLE_AUTH_TTL') || 60,
+    throttleAuthLimit: config.get<number>('THROTTLE_AUTH_LIMIT') || 0,
+    throttleTxTtl: config.get<number>('THROTTLE_TX_TTL') || 60,
+    throttleTxLimit: config.get<number>('THROTTLE_TX_LIMIT') || 20,
+    throttleStrictTtl: config.get<number>('THROTTLE_STRICT_TTL') || 60,
+    throttleStrictLimit: config.get<number>('THROTTLE_STRICT_LIMIT') || 3,
+
     // cors
     corsOrigin: config.get<string>('CORS_ORIGIN') || 'http://localhost:3000',
 

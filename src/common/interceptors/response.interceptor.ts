@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export interface ResponseFormat<T> {
+interface ResponseFormat<T> {
     success: boolean;
     data: T;
 }

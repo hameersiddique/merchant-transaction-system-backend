@@ -1,8 +1,7 @@
-import { Throttle } from '@nestjs/throttler';
-import { SetMetadata } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 
-export const DefaultThrottle = () => Throttle({ default: { limit: 1 } });
-export const AuthThrottle = () => Throttle({ auth: { limit: 1 } });
-export const TransactionThrottle = () => Throttle({ transactions: { limit: 1 } });
-export const StrictThrottle = () => Throttle({ strict: { limit: 1 } });
-export const SkipThrottle = () => SetMetadata('skipThrottle', true);
+export const DefaultThrottle = () => SkipThrottle({ auth: true, transactions: true, strict: true });
+export const AuthThrottle = () => SkipThrottle({ default: true, transactions: true, strict: true });
+export const TransactionThrottle = () => SkipThrottle({ default: true, auth: true, strict: true });
+export const StrictThrottle = () => SkipThrottle({ default: true, auth: true, transactions: true });
+export const SkipAllThrottle = () => SkipThrottle();

@@ -1,12 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import type { RabbitMQConfig } from 'src/common/types';
 import { getEnv } from 'src/common/utils/env.util';
-
-export interface RabbitMQConfig {
-    url: string;
-    exchange: string;
-    queue: string;
-    routingKey: string;
-}
 
 export const rabbitMQConfig = (configService: ConfigService): RabbitMQConfig => {
     const env = getEnv(configService);

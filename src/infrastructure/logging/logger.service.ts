@@ -1,6 +1,7 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { getLoggerConfig, LogLevel } from './logger.config';
+import { getLoggerConfig } from './logger.config';
+import { LogLevel } from 'src/common/enums';
 
 @Injectable()
 export class LoggerService implements NestLoggerService {

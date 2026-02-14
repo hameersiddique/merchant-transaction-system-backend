@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import * as amqp from 'amqp-connection-manager';
 import type { ConfirmChannel, Options } from 'amqplib';
-import type { RabbitMQConfig } from './rabbitmq.config';
+import type { RabbitMQConfig } from 'src/common/types';
 import { TransactionCreatedEvent } from 'src/modules/transactions/events/transactionCreated.event';
 
-export interface MessageHandler {
+interface MessageHandler {
   (message: any): Promise<void>;
 }
 

@@ -6,3 +6,10 @@ export interface TransactionCreatedEvent {
     status: string;
     createdAt: Date;
 }
+
+export interface RabbitMQConfig {
+    url: string;
+    exchange: string;
+    queue: string;
+    routingKey: string;
+}

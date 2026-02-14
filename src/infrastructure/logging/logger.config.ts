@@ -1,12 +1,6 @@
-export enum LogLevel {
-    ERROR = 'error',
-    WARN = 'warn',
-    INFO = 'info',
-    HTTP = 'http',
-    DEBUG = 'debug',
-}
+import { LogLevel } from "src/common/enums";
 
-export interface LoggerConfig {
+interface LoggerConfig {
     level: LogLevel;
     prettyPrint: boolean;
     timestamp: boolean;

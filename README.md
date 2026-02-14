@@ -166,7 +166,12 @@ src/
 │   ├── interceptors/                # Response interceptors
 │   │   └── response.interceptor.ts  # Standardize API responses
 │   └── utils/                       # Utility functions
-│       └── env.util.ts             # Environment variable helpers
+│   │    └── env.util.ts             # Environment variable helpers
+│   └── guards/                     # Guards
+│   │    └── jwt-auth.guard.ts         # JWT Guard
+│   │── strategies/                     # Strategies
+│   │    └── jwt.strategy.ts           # Passport strategies
+
 │
 ├── database/                        # Database configuration
 │   ├── migrations/                  # TypeORM migrations
@@ -178,7 +183,7 @@ src/
 │   ├── cache/                      # Redis caching
 │   │   ├── cache.module.ts
 │   │   └── redis.config.ts
-│   ├── logging/                    # Winston logging
+│   ├── logging/                    # logging
 │   │   ├── logger.config.ts
 │   │   ├── logger.module.ts
 │   │   └── logger.service.ts
@@ -201,7 +206,7 @@ src/
 │   │   │   └── response/
 │   │   │       ├── login.response.dto.ts
 │   │   │       └── register.response.dto.ts
-│   │   ├── guards/                 # Auth guards
+│   │   ├── guards/                 # guards
 │   │   │   └── jwt-auth.guard.ts
 │   │   ├── strategies/             # Passport strategies
 │   │   │   └── jwt.strategy.ts
@@ -256,9 +261,11 @@ src/
 5. **Caching** - Only caching the first page with 10 items. Cache clears when you create a new transaction. TTL is 30 seconds.
 
 6. **Rate Limits** - Different limits for different endpoints:
-   - Auth stuff: 5 requests/minute (to prevent brute force)
-   - Transactions: 30 requests/minute
-   - Blocks last 60 seconds
+   - Auth endpoints: 20 requests/minute (to prevent brute force)
+   - Transaction endpoints: 50 requests/minute
+   - Strict endpoints: 10 requests/minute
+   - Default endpoints: 100 requests/minute
+   - Total block time: 60 seconds
 
 ### Trade-offs I Made
 
